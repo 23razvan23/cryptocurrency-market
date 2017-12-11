@@ -1,9 +1,9 @@
-package com.github.crypto;
+package com.github.crypto.feed.parser;
 
 import com.github.crypto.model.Currency;
 
 import java.util.List;
 
-public interface CryptoMarket {
+public interface MarketParser {
     List<Currency> retrieve(String marketResponse);
 }
