@@ -1,8 +1,8 @@
 package com.github.crypto.controller;
 
-import com.github.crypto.model.Currency;
-import com.github.crypto.model.Market;
+import com.github.crypto.aggregator.MarketAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,15 +12,16 @@ import java.util.Optional;
 
 @RestController
 public class MarketController {
-    private static final String DEFAULT_CURRENCY_ID = "id-ethereum";
-    private static final double DEFAULT_CURRENCY_PRICE = 0.0;
 
+    private static final double DEFAULT_CURRENCY_PRICE = 0.0;
+    @Value("${currency.default-id}")
+    private String defaultCurrencyId;
     @Autowired
-    private Market market;
+    private MarketAggregator marketAggregator;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Double getDefaultCurrencyPrice() {
-        return retrievePrice(DEFAULT_CURRENCY_ID);
+        return retrievePrice(defaultCurrencyId);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -29,8 +30,7 @@ public class MarketController {
     }
 
     private Double retrievePrice(String currencyId) {
-        return Optional.ofNullable(market.getCurrency(currencyId))
-                .map(Currency::getPrice)
+        return Optional.ofNullable(marketAggregator.getAvgPrice(currencyId))
                 .orElse(DEFAULT_CURRENCY_PRICE);
     }
 }

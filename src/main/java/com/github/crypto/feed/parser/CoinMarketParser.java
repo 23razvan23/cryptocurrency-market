@@ -5,19 +5,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
-public class CoinMarketParser implements MarketParser {
+public class CoinMarketParser {
 
-    public List<Currency> retrieve(String html) {
+    public Stream<Currency> retrieve(String html) {
         return Jsoup.parse(html)
                 .select("table#currencies > tbody > tr")
                 .stream()
-                .map(this::mapToCurrency)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .map(this::mapToCurrency);
     }
 
     private Currency mapToCurrency(Element element) {
